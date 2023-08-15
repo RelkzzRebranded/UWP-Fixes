@@ -1,0 +1,35 @@
+--[[
+    mousemove fix
+
+    Information:
+
+    This works by overwriting mousemouserel/abs with our own, however, instead of moving the mouse, it moves the camera.
+    Note that this can easily be detected by anti cheats.
+
+    Source:
+
+    https://devforum.roblox.com/t/help-making-a-vector2-to-vector3-function/1882521/5
+]]
+
+-- // Services
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+
+-- // Vars
+local CurrentCamera = Workspace.CurrentCamera
+
+-- // Makes our camera look at a specific 2d point
+local function CameraLookAt(Point)
+    local PointRay = CurrentCamera:ViewportPointToRay(Point.X, Point.Y)
+    CurrentCamera.CFrame = CFrame.lookAt(CurrentCamera.CFrame.Position, PointRay.Origin + PointRay.Direction)
+end
+
+-- // Overwrite mousemoverel with our own
+getgenv().mousemoverel = function(X, Y)
+    CameraLookAt(workspace.CurrentCamera.ViewportSize / 2 + Vector2.new(X, Y))
+end
+
+-- // Overwrite mousemoveabs with our own
+getgenv().mousemoveabs = function(X, Y)
+    CameraLookAt(Vector2.new(X, Y))
+end
